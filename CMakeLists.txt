@@ -18,9 +18,11 @@ add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 add_executable(particle-simulation ${source-files})
 
 target_include_directories(
+    particle-simulation PUBLIC 
     vendor/SDL/include/
 )
 
 target_link_libraries(
+    particle-simulation PRIVATE
     SDL3::SDL3
 )
