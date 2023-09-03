@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <iostream>
 
 struct RGBA
 {
@@ -15,6 +16,12 @@ struct RGBA
     bool operator!=(const RGBA& other)
     {
         return (r != other.r) || (g != other.g) || (b != other.b) || (a != other.a);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const RGBA& rgba)
+    {
+        os << "(" << +rgba.r << ", " << +rgba.g << ", " << +rgba.b << ", " << +rgba.a << ")";
+        return os;
     }
 
     // uint32_t MapSDL(SDL_PixelFormatEnum formatEnum)

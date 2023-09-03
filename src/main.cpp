@@ -1,12 +1,9 @@
 #include "BasicClock.h"
-#include "Math.h"
-#include "RGBA.h"
+#include "simulation/Math.h"
+
+#include "simulation/ParticleSimulation.h"
 
 #include <SDL3/SDL.h>
-
-#include <iostream>
-#include <vector>
-
 
 void UpdateTexturePixels(SDL_Texture* texture, const std::vector<RGBA>& newPixels, int pitch, int dataCount)
 {
@@ -18,10 +15,27 @@ void UpdateTexturePixels(SDL_Texture* texture, const std::vector<RGBA>& newPixel
 
 int main(int argc, char* argv[])
 {
+    MMath::iVec2 vec1 = MMath::iVec2(1, 0);
+    MMath::iVec2 vec2 = MMath::iVec2(3, 5);
+    MMath::fVec2 vec3 = vec2.Normalize();
+    MMath::dVec2 vec4 = vec2.Normalize();
+
+    std::cout << "Vec1: " << vec1 << std::endl;
+    std::cout << "Vec2: " << vec2 << std::endl;
+    std::cout << "Plus: " << vec1 + vec2 << std::endl;
+    std::cout << "Minus: " << vec1 - vec2 << std::endl;
+    std::cout << "Vec2 Scalar mult by -2 : " << vec2 * -2 << std::endl;
+    std::cout << "Vec2 length: " << vec2.Length() << std::endl;
+    std::cout << "Vec2 dot Vec1: " << vec1.Dot(vec2) << std::endl;
+    std::cout << "Vec2 cross vec1: " << vec1.Cross(vec2) << std::endl;
+    std::cout << "Angle between Vec1 and Vec2: " << vec1.Angle(vec2) << std::endl;
+
     SDL_Init(SDL_INIT_EVERYTHING);
 
+    ParticleSimulation ps(640, 360);
+
+    RGBA Empty(0, 0, 0, 0);
     RGBA White(255, 255, 255);
-    RGBA Void(0, 0, 0, 0);
     RGBA Sand(194, 178, 128);
 
     const int WINDOW_WIDTH = 640;
@@ -39,7 +53,7 @@ int main(int argc, char* argv[])
     const int PIXEL_COUNT = SIMULATION_WIDTH * SIMULATION_HEIGHT;
     const int PIXEL_DATA_COUNT = SIMULATION_WIDTH * SIMULATION_HEIGHT * BYTES_PER_PIXEL;
 
-    std::vector<RGBA> pixels(PIXEL_COUNT, Void);
+    std::vector<RGBA> pixels(PIXEL_COUNT, Empty);
 
     SDL_Texture* texture = SDL_CreateTexture(renderer, pixelFormatEnum, SDL_TEXTUREACCESS_STREAMING, SIMULATION_WIDTH, SIMULATION_HEIGHT);
     int TEXTURE_PITCH = SIMULATION_WIDTH * BYTES_PER_PIXEL;
@@ -80,7 +94,7 @@ int main(int argc, char* argv[])
                         {
                             for(size_t i = 0; i < PIXEL_COUNT; i++)
                             {
-                                pixels[i] = Void;
+                                pixels[i] = Empty;
                             }
                             
                             UpdateTexture();
@@ -89,7 +103,7 @@ int main(int argc, char* argv[])
                             currentElement = Sand;
                         break;
                         case SDLK_2:
-                            currentElement = Void;
+                            currentElement = Empty;
                         break;
                     }
                 } break;
@@ -108,8 +122,8 @@ int main(int argc, char* argv[])
             float mouseXF, mouseYF;
             SDL_GetMouseState(&mouseXF, &mouseYF);
             
-            int mouseX = Clamp(static_cast<int>(mouseXF), 0, SIMULATION_WIDTH - 1);
-            int mouseY = Clamp(static_cast<int>(mouseYF), 0, SIMULATION_HEIGHT - 1);
+            int mouseX = MMath::Clamp<int>(static_cast<int>(mouseXF), 0, SIMULATION_WIDTH - 1);
+            int mouseY = MMath::Clamp<int>(static_cast<int>(mouseYF), 0, SIMULATION_HEIGHT - 1);
 
             if (mouseY >= 0 && mouseY < SIMULATION_HEIGHT - 1)
             {
@@ -118,7 +132,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        if(static_cast<int>(clock.DeltaSeconds()) % 2 == 0)
+        if(true)//static_cast<int>(clock.DeltaSeconds()) % 2 == 0)
         {
             bool textureNeedsUpdate = false;
             for(size_t i = pixels.size() - 1; i > 0; i--)
@@ -132,9 +146,9 @@ int main(int argc, char* argv[])
                     {
                         int newY = yPosition + 1;
 
-                        if(pixels[static_cast<size_t>(SIMULATION_WIDTH) * newY + xPosition] == Void)
+                        if(pixels[static_cast<size_t>(SIMULATION_WIDTH) * newY + xPosition] == Empty)
                         {
-                            pixels[i] = Void;
+                            pixels[i] = Empty;
                             pixels[static_cast<size_t>(SIMULATION_WIDTH) * newY + xPosition] = Sand;
 
                             textureNeedsUpdate = true;
