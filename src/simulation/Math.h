@@ -30,7 +30,9 @@ namespace MMath
         using Type = T;
 
         Vec2(T x = 0, T y = 0) : x(x), y(y) {}
-        Vec2(const Vec2& other) : x(other.x), y(other.y) { }
+
+        template<typename U>
+        Vec2(const Vec2<U>& other) : x(static_cast<Type>(other.x)), y(static_cast<Type>(other.y)) { }
 
         Vec2& operator=(const Vec2<T> &other)
         {
@@ -71,7 +73,7 @@ namespace MMath
         typename std::enable_if<std::is_arithmetic<U>::value, Vec2<T>>::type
         operator*(U scalar)
         {
-            return {x * scalar, y * scalar};
+            return { static_cast<Type>(x * scalar), static_cast<Type>(y * scalar) };
         }
 
         // Scalar division
@@ -79,22 +81,25 @@ namespace MMath
         typename std::enable_if<std::is_arithmetic<U>::value, Vec2<T>>::type
         operator/(U scalar)
         {
-            return {x / scalar, y / scalar};
+            if(scalar != 0)
+                return {static_cast<Type>(x / scalar), static_cast<Type>(y / scalar)};
+
+            return { 0, 0 };
         }
 
         T Dot(const Vec2 &other)
         {
-            return {x * other.x + y * other.y};
+            return x * other.x + y * other.y;
         }
 
         T Cross(const Vec2 &other)
         {
-            return {x * other.y - y * other.x};
+            return x * other.y - y * other.x;
         }
 
         Real Length()
         {
-            return std::sqrt(static_cast<float>(x * x + y * y));
+            return std::sqrt(x * x + y * y);
         }
 
         Vec2<Real> Normalize()
@@ -102,20 +107,16 @@ namespace MMath
             Real length = Length();
 
             if (length != 0)
-            {
-                return Vec2<Real>{ *this / length };
-            }
+                return { static_cast<Real>(x) / length, static_cast<Real>(y) / length  };
 
             return {0.0f, 0.0f};
         }
 
         // Angle between two vectors in radians
-        auto Angle(const Vec2 &other)
+        template<typename U = T>
+        Real Angle(const Vec2<U> &other)
         {
-            if constexpr (std::is_same_v<T, double>)
-                return std::atan2(Cross(other), Dot(other));
-            else
-                return static_cast<float>(std::atan2(Cross(other), Dot(other)));
+            return std::atan2(Cross(other), Dot(other));
         }
 
         T Distance(const Vec2 &other)

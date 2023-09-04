@@ -22,13 +22,19 @@ int main(int argc, char* argv[])
 
     std::cout << "Vec1: " << vec1 << std::endl;
     std::cout << "Vec2: " << vec2 << std::endl;
-    std::cout << "Plus: " << vec1 + vec2 << std::endl;
+    std::cout << "Vec3: " << vec3 << std::endl;
+    std::cout << "Vec4: " << vec4 << std::endl;
+
+    std::cout << "vec1 & vec2 " << std::endl;
+    std::cout << "Plus:" << vec1 + vec2 << std::endl;
     std::cout << "Minus: " << vec1 - vec2 << std::endl;
-    std::cout << "Vec2 Scalar mult by -2 : " << vec2 * -2 << std::endl;
+    std::cout << "Vec2 Scalar mult by -2.5 : " << vec2 * -2.55 << std::endl;
     std::cout << "Vec2 length: " << vec2.Length() << std::endl;
     std::cout << "Vec2 dot Vec1: " << vec1.Dot(vec2) << std::endl;
     std::cout << "Vec2 cross vec1: " << vec1.Cross(vec2) << std::endl;
     std::cout << "Angle between Vec1 and Vec2: " << vec1.Angle(vec2) << std::endl;
+    std::cout << "Vec4: " << vec4.Normalize() << std::endl;
+    std::cout << "Vec4 from vec1: " << (vec4 = vec1) << std::endl;
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
