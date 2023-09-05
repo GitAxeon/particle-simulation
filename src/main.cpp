@@ -20,6 +20,9 @@ int main(int argc, char* argv[])
     MMath::fVec2 vec3 = vec2.Normalize();
     MMath::dVec2 vec4 = vec2.Normalize();
 
+    MMath::iVec2 test = MMath::Vec2<double>(3, 3);
+    MMath::dVec2 asd();
+
     std::cout << "Vec1: " << vec1 << std::endl;
     std::cout << "Vec2: " << vec2 << std::endl;
     std::cout << "Vec3: " << vec3 << std::endl;
@@ -28,7 +31,7 @@ int main(int argc, char* argv[])
     std::cout << "vec1 & vec2 " << std::endl;
     std::cout << "Plus:" << vec1 + vec2 << std::endl;
     std::cout << "Minus: " << vec1 - vec2 << std::endl;
-    std::cout << "Vec2 Scalar mult by -2.5 : " << vec2 * -2.55 << std::endl;
+    std::cout << "Vec2 Scalar mult by -2.5 : " << vec2 * -2.5 << std::endl;
     std::cout << "Vec2 length: " << vec2.Length() << std::endl;
     std::cout << "Vec2 dot Vec1: " << vec1.Dot(vec2) << std::endl;
     std::cout << "Vec2 cross vec1: " << vec1.Cross(vec2) << std::endl;
