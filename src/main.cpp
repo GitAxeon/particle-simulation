@@ -20,8 +20,9 @@ int main(int argc, char* argv[])
     MMath::fVec2 vec3 = vec2.Normalize();
     MMath::dVec2 vec4 = vec2.Normalize();
 
-    MMath::iVec2 test = MMath::Vec2<double>(3, 3);
-    MMath::dVec2 asd();
+    MMath::iVec2 test = MMath::Vec2<double>(3.7f, 3.4f);
+
+    MMath::Min(30, 20.7);
 
     std::cout << "Vec1: " << vec1 << std::endl;
     std::cout << "Vec2: " << vec2 << std::endl;
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    ParticleSimulation ps(640, 360);
+    ParticleSimulation::World simulation(640, 360); 
 
     RGBA Empty(0, 0, 0, 0);
     RGBA White(255, 255, 255);

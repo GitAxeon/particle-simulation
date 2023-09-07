@@ -14,10 +14,10 @@ namespace MMath
 
     // Functions
 
-    template <typename T, typename = EnableNumeric<T>>
-    T Min(T lhs, T rhs)
+    template <typename T,typename U, typename = EnableNumeric<T>, typename = EnableNumeric<U>>
+    T Min(T lhs, U rhs)
     {
-        return lhs < rhs ? lhs : rhs;
+        return lhs < rhs ? lhs : static_cast<T>(rhs);
     }
 
     template <typename T, typename = EnableNumeric<T>>
@@ -104,7 +104,7 @@ namespace MMath
         template <typename U>
         Vec2Result<U> operator*(U scalar) const
         {
-            return { static_cast<NumericCompatibleType>(x * scalar), static_cast<NumericCompatibleType>(y * scalar) };
+            return { static_cast<NumericCompatibleType<U>>(x * scalar), static_cast<NumericCompatibleType<U>>(y * scalar) };
         }
 
         // Scalar division

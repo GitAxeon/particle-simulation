@@ -10,6 +10,8 @@ public:
     Particle(RGBA color) : m_Color(color) {}
 
     RGBA GetColor() { return m_Color; };
+    void SetColor(const RGBA& color) { m_Color = color; }
+
     virtual void Update(std::vector<Particle>& particles) { }
 
 private:
@@ -27,9 +29,10 @@ class Sand : public Particle
 {
 public: 
     Sand() : Particle(RGBA(194, 178, 128)) { }
+
     void Update(std::vector<Particle>& particles) override
     {
-
+        
     }
 };
 
