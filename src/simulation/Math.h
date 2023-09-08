@@ -14,20 +14,20 @@ namespace MMath
 
     // Functions
 
-    template <typename T,typename U, typename = EnableNumeric<T>, typename = EnableNumeric<U>>
-    T Min(T lhs, U rhs)
+    template<typename T,typename U, typename = EnableNumeric<T>, typename = EnableNumeric<U>>
+    inline T Min(T lhs, U rhs)
     {
         return lhs < rhs ? lhs : static_cast<T>(rhs);
     }
 
     template <typename T, typename = EnableNumeric<T>>
-    T Max(T lhs, T rhs)
+    inline T Max(T lhs, T rhs)
     {
         return lhs > rhs ? lhs : rhs;
     }
 
     template <typename T, typename = EnableNumeric<T>>
-    T Clamp(T value, T min, T max)
+    inline T Clamp(T value, T min, T max)
     {
         return Max<T>(min, Min<T>(value, max));
     }
@@ -179,7 +179,15 @@ namespace MMath
         T y;
     };
 
-    using dVec2 = Vec2<double>;
-    using fVec2 = Vec2<float>;
-    using iVec2 = Vec2<int>;
+    using f64Vec2 = Vec2<double>;
+    using f32Vec2 = Vec2<float>;
+
+    using i8Vec2 = Vec2<char>;
+    using u8Vec2 = Vec2<unsigned char>;
+
+    using i32Vec2 = Vec2<int>;
+    using i64Vec2 = Vec2<long>;
+    
+    using u32Vec2 = Vec2<unsigned long>;
+    using u64Vec2 = Vec2<unsigned long long>;
 }

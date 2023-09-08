@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WorldInfo.h"
 #include "Particle.h"
 
 #include <vector>
@@ -9,14 +10,17 @@ namespace ParticleSimulation
     class World 
     {
     public:
-        World(int width = 640, int height = 360);
+        World(Vec2 worldSize = Vec2(640, 360));
 
         void Update();
 
-    private:
-        std::vector<Particle> m_Particles;
+        std::vector<Particle>& GetParticles() { return m_Particles; }
 
-        int m_Width;
-        int m_Height;
+    public:
+        WorldInfo Info;
+    
+    private:
+        Vec2 m_worldSize;
+        std::vector<Particle> m_Particles;
     };
 }

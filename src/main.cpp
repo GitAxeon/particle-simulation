@@ -15,34 +15,7 @@ void UpdateTexturePixels(SDL_Texture* texture, const std::vector<RGBA>& newPixel
 
 int main(int argc, char* argv[])
 {
-    MMath::iVec2 vec1 = MMath::iVec2(1, 0);
-    MMath::iVec2 vec2 = MMath::iVec2(3, 5);
-    MMath::fVec2 vec3 = vec2.Normalize();
-    MMath::dVec2 vec4 = vec2.Normalize();
-
-    MMath::iVec2 test = MMath::Vec2<double>(3.7f, 3.4f);
-
-    MMath::Min(30, 20.7);
-
-    std::cout << "Vec1: " << vec1 << std::endl;
-    std::cout << "Vec2: " << vec2 << std::endl;
-    std::cout << "Vec3: " << vec3 << std::endl;
-    std::cout << "Vec4: " << vec4 << std::endl;
-
-    std::cout << "vec1 & vec2 " << std::endl;
-    std::cout << "Plus:" << vec1 + vec2 << std::endl;
-    std::cout << "Minus: " << vec1 - vec2 << std::endl;
-    std::cout << "Vec2 Scalar mult by -2.5 : " << vec2 * -2.5 << std::endl;
-    std::cout << "Vec2 length: " << vec2.Length() << std::endl;
-    std::cout << "Vec2 dot Vec1: " << vec1.Dot(vec2) << std::endl;
-    std::cout << "Vec2 cross vec1: " << vec1.Cross(vec2) << std::endl;
-    std::cout << "Angle between Vec1 and Vec2: " << vec1.Angle(vec2) << std::endl;
-    std::cout << "Vec4: " << vec4.Normalize() << std::endl;
-    std::cout << "Vec4 from vec1: " << (vec4 = vec1) << std::endl;
-
     SDL_Init(SDL_INIT_EVERYTHING);
-
-    ParticleSimulation::World simulation(640, 360); 
 
     RGBA Empty(0, 0, 0, 0);
     RGBA White(255, 255, 255);
@@ -77,6 +50,10 @@ int main(int argc, char* argv[])
 
     bool painting = false;
     RGBA currentElement = Sand;
+
+    ParticleSimulation::World simulation;
+    ParticleSimulation::Renderer simulationRenderer(simulation, renderer);
+    ParticleSimulation::UserInterface ui(simulation);
 
     BasicClock clock;
     bool open = true;
@@ -182,6 +159,11 @@ int main(int argc, char* argv[])
         // Render a thing
         SDL_RenderClear(renderer);
         SDL_RenderTexture(renderer, texture, nullptr, nullptr);
+
+        ui.HandleInput();
+        simulation.Update();
+        simulationRenderer.Render();
+
         SDL_RenderPresent(renderer);
 
     }
