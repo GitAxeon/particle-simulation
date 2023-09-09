@@ -31,9 +31,10 @@ namespace ParticleSimulation
         uint32_t* pixelData = static_cast<uint32_t*>(pixels);
         
         size_t index = 0;
-        for(auto& particle : m_World.GetParticles())
+
+        for(Particle* particle : m_World.GetParticles())
         {
-            pixelData[index] = particle.GetColor().MapSDL(SDL_PIXELFORMAT_RGBA32);
+            pixelData[index] = particle->GetColor().MapSDL(SDL_PIXELFORMAT_RGBA32);
 
             ++index;
         }

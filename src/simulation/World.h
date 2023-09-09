@@ -7,20 +7,26 @@
 
 namespace ParticleSimulation
 {
+    class Particle;
+
     class World 
     {
     public:
         World(Vec2 worldSize = Vec2(640, 360));
+        ~World();
 
         void Update();
+        
+        bool PlaceParticle(Particle* particle, Vec2 position);
 
-        std::vector<Particle>& GetParticles() { return m_Particles; }
+        std::vector<Particle*>& GetParticles() { return m_Particles; }
+        
 
     public:
         WorldInfo Info;
     
     private:
-        Vec2 m_worldSize;
-        std::vector<Particle> m_Particles;
+        Vec2 m_WorldSize;
+        std::vector<Particle*> m_Particles;
     };
 }
