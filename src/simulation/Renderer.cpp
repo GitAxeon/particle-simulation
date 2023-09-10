@@ -14,10 +14,12 @@ namespace ParticleSimulation
             static_cast<int>(size.x), 
             static_cast<int>(size.y)
         );
+
+        UpdateTexture();
     }
 
-    void Renderer::Render()
-    {  
+    void Renderer::UpdateTexture()
+    {
         int pitch = static_cast<int>(m_World.Info.GetSize().x) * 4;
         void* pixels = nullptr;
 
@@ -34,12 +36,23 @@ namespace ParticleSimulation
 
         for(Particle* particle : m_World.GetParticles())
         {
-            pixelData[index] = particle->GetColor().MapSDL(SDL_PIXELFORMAT_RGBA32);
+            if(particle)
+                pixelData[index] = particle->GetColor().MapSDL(SDL_PIXELFORMAT_RGBA32);
+            else
+                pixelData[index] = 0;
 
             ++index;
         }
 
         SDL_UnlockTexture(m_Texture);
+    }
+
+    void Renderer::Render()
+    {
+        if(m_World.WorldChanged())
+        {
+            UpdateTexture();
+        }
 
         SDL_RenderTexture(m_SDLRenderer, m_Texture, nullptr, nullptr);
     }

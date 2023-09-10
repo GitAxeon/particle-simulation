@@ -3,23 +3,28 @@
 
 namespace ParticleSimulation
 {
-    void Particle::Update(World& world, Vec2 position) { }
+    bool Particle::Update(World& world, Vec2 position) { return false; }
 
-    void NullParticle::Update(World& world, Vec2 position) { }
+    bool NullParticle::Update(World& world, Vec2 position) { return false; }
 
-    void Sand::Update(World& world, Vec2 position)
+    bool Sand::Update(World& world, Vec2 position)
     {
         Vec2 below = Vec2(position.x, position.y + 1);
         bool canFall = world.Info.IsValidPosition(below);
 
+        if(!canFall)
+            return false;
+
         bool isEmpty = dynamic_cast<NullParticle*>(world.GetParticles()[world.Info.PositionToIndex(below)]);
 
-        if(canFall && isEmpty)
-        {
-            world.PlaceParticle(new Sand, below);
-            world.PlaceParticle(new NullParticle, position);
-        }
+        if(!isEmpty)
+            return false;
+
+        world.PlaceParticle(new NullParticle, position);
+        world.PlaceParticle(new Sand, below);
+
+        return true;
     }
 
-    void Rock::Update(World& world, Vec2 position) { }
+    bool Rock::Update(World& world, Vec2 position) { return false; }
 }

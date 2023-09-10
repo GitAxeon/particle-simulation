@@ -9,8 +9,8 @@ namespace ParticleSimulation
     {
     public:
         Renderer(World& world, SDL_Renderer* renderer);
+        void UpdateTexture();
         void Render();
-
     private:
         World& m_World;
         SDL_Renderer* m_SDLRenderer;

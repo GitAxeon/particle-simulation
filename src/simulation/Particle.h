@@ -16,7 +16,7 @@ namespace ParticleSimulation
         RGBA GetColor() { return m_Color; };
         void SetColor(const RGBA& color) { m_Color = color; }
         
-        virtual void Update(World& world, Vec2 position);
+        virtual bool Update(World& world, Vec2 position);
 
     private:
         RGBA m_Color;
@@ -26,7 +26,7 @@ namespace ParticleSimulation
     {
     public:
         NullParticle() : Particle(RGBA(0, 0, 0, 0)) { }
-        void Update(World& world, Vec2 position) override;
+        bool Update(World& world, Vec2 position) override;
     };
 
     class Sand : public Particle
@@ -34,13 +34,13 @@ namespace ParticleSimulation
     public: 
         Sand() : Particle(RGBA(194, 178, 128)) { }
 
-        void Update(World& world, Vec2 position) override;
+        bool Update(World& world, Vec2 position) override;
     };
 
     class Rock : public Particle
     {
     public:
         Rock() : Particle(RGBA(90, 77, 65)) { }
-        void Update(World& world, Vec2 position) override;
+        bool Update(World& world, Vec2 position) override;
     };
 }

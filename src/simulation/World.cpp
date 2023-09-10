@@ -32,12 +32,22 @@ namespace ParticleSimulation
     {  
         auto it = m_Particles.rbegin();
         size_t index = Info.GetMaxIndex();
-
-        for(; it != m_Particles.rend(); it++)
+        
+        if(m_WorldChanged)
         {
-            (*it)->Update(*this, Info.IndexToPosition(index));
+            bool worldChanged = false;
+            
+            for(; it != m_Particles.rend(); it++)
+            {
+                bool change = (*it)->Update(*this, Info.IndexToPosition(index));
 
-            --index;
+                if(change)
+                    worldChanged = true;
+
+                --index;
+            }
+
+            m_WorldChanged = worldChanged;
         }
     }
 
@@ -51,6 +61,8 @@ namespace ParticleSimulation
         delete m_Particles[index];
 
         m_Particles[index] = particle;
+
+        m_WorldChanged = true;
 
         return true;
     }

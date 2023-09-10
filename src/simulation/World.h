@@ -20,7 +20,7 @@ namespace ParticleSimulation
         bool PlaceParticle(Particle* particle, Vec2 position);
 
         std::vector<Particle*>& GetParticles() { return m_Particles; }
-        
+        bool WorldChanged() const { return m_WorldChanged; }
 
     public:
         WorldInfo Info;
@@ -28,5 +28,6 @@ namespace ParticleSimulation
     private:
         Vec2 m_WorldSize;
         std::vector<Particle*> m_Particles;
+        bool m_WorldChanged = false;
     };
 }
