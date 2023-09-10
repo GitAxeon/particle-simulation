@@ -30,23 +30,38 @@ namespace ParticleSimulation
 
     void World::Update()
     {  
-        auto it = m_Particles.rbegin();
-        size_t index = Info.GetMaxIndex();
+        // auto it = m_Particles.rbegin();
+        // size_t index = Info.GetMaxIndex();
         
+        // if(m_WorldChanged)
+        // {
+        //     bool worldChanged = false;
+            
+        //     for(; it != m_Particles.rend(); it++)
+        //     {
+        //         bool change = (*it)->Update(*this, Info.IndexToPosition(index));
+
+        //         if(change)
+        //             worldChanged = true;
+
+        //         --index;
+        //     }
+
+        //     m_WorldChanged = worldChanged;
+        // }
+
         if(m_WorldChanged)
         {
             bool worldChanged = false;
-            
-            for(; it != m_Particles.rend(); it++)
+
+            for(Index i = Info.GetMaxIndex(); i >= 0; --i)
             {
-                bool change = (*it)->Update(*this, Info.IndexToPosition(index));
+                bool change = m_Particles[i]->Update(*this, Info.IndexToPosition(i));
 
                 if(change)
                     worldChanged = true;
-
-                --index;
             }
-
+            
             m_WorldChanged = worldChanged;
         }
     }

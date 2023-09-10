@@ -13,7 +13,7 @@ namespace ParticleSimulation
         Particle() : m_Color(RGBA(255, 0, 255, 255)) { }
         Particle(RGBA color) : m_Color(color) {}
 
-        RGBA GetColor() { return m_Color; };
+        RGBA GetColor() const { return m_Color; };
         void SetColor(const RGBA& color) { m_Color = color; }
         
         virtual bool Update(World& world, Vec2 position);

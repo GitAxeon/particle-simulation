@@ -13,7 +13,7 @@ struct RGBA
 
     bool operator==(const RGBA& other)
     {
-        return r == other.r && g == other.g && b == other.b && a == other.a;
+        return (r == other.r) && (g == other.g) && (b == other.b) && (a == other.a);
     }
 
     bool operator!=(const RGBA& other)
@@ -43,4 +43,25 @@ struct RGBA
     uint8_t g;
     uint8_t b;
     uint8_t a;
+};
+
+class ColorMapper
+{
+public:
+    ColorMapper(SDL_PixelFormatEnum format = SDL_PIXELFORMAT_RGBA32)
+    {
+        m_Format = SDL_CreatePixelFormat(format);
+    }
+    ~ColorMapper()
+    {
+        SDL_DestroyPixelFormat(m_Format);
+    }
+
+    uint32_t Map(const RGBA& color)
+    {
+        return SDL_MapRGBA(m_Format, color.r, color.g, color.b, color.a);
+    }
+
+private:
+    SDL_PixelFormat* m_Format;
 };

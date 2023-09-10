@@ -20,6 +20,7 @@ namespace ParticleSimulation
         bool PlaceParticle(Particle* particle, Vec2 position);
 
         std::vector<Particle*>& GetParticles() { return m_Particles; }
+        
         bool WorldChanged() const { return m_WorldChanged; }
 
     public:

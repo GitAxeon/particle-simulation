@@ -16,5 +16,6 @@ namespace ParticleSimulation
         SDL_Renderer* m_SDLRenderer;
 
         SDL_Texture* m_Texture = nullptr;
+        ColorMapper m_ColorMapper;
     };
 }

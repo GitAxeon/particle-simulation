@@ -15,6 +15,8 @@ namespace ParticleSimulation
             static_cast<int>(size.y)
         );
 
+        m_ColorMapper = ColorMapper(SDL_PIXELFORMAT_RGBA32);
+
         UpdateTexture();
     }
 
@@ -31,13 +33,12 @@ namespace ParticleSimulation
         );
 
         uint32_t* pixelData = static_cast<uint32_t*>(pixels);
-        
         size_t index = 0;
-
+        
         for(Particle* particle : m_World.GetParticles())
         {
             if(particle)
-                pixelData[index] = particle->GetColor().MapSDL(SDL_PIXELFORMAT_RGBA32);
+                pixelData[index] = m_ColorMapper.Map(particle->GetColor());
             else
                 pixelData[index] = 0;
 

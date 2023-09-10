@@ -20,6 +20,8 @@ int main(int argc, char* argv[])
     ParticleSimulation::Renderer simulationRenderer(simulation, renderer);
     ParticleSimulation::UserInterface ui(simulation);
 
+    simulation.PlaceParticle(new ParticleSimulation::Sand, ParticleSimulation::Vec2(0, 0));
+
     bool painting = false;
     bool erase = false;
 
@@ -89,14 +91,17 @@ int main(int argc, char* argv[])
             // std::cout << "index: " << simulation.Info.PositionToIndex(ParticleSimulation::Vec2(mouseX, mouseY)) << std::endl;
         }
 
-        // Render a thing
-        SDL_RenderClear(renderer);
-
         ui.HandleInput();
         simulation.Update();
-        simulationRenderer.Render();
+        
+        // Render a thing
 
-        SDL_RenderPresent(renderer);
+        if(simulation.WorldChanged())
+        {
+            SDL_RenderClear(renderer);
+            simulationRenderer.Render();
+            SDL_RenderPresent(renderer);
+        }
 
     }
 
