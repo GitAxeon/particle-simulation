@@ -16,9 +16,7 @@ namespace ParticleSimulation
     Vec2 WorldInfo::IndexToPosition(Index index) const
     {
         Vec2 result(index % m_WorldSize.x, index / m_WorldSize.x);
-
-        // return result;
-
+        
         return Vec2(
             MMath::Clamp(result.x, m_MinPos.x, m_MaxPos.x),
             MMath::Clamp(result.y, m_MinPos.y, m_MaxPos.y)

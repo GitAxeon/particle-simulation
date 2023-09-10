@@ -10,7 +10,6 @@ namespace ParticleSimulation
         
         m_Particles.resize(worldSize.x * worldSize.y, nullptr);
 
-        
         for(size_t i = 0; i < m_Particles.size(); i++)
         {
             m_Particles[i] = new NullParticle;
@@ -30,32 +29,15 @@ namespace ParticleSimulation
 
     void World::Update()
     {  
-        // auto it = m_Particles.rbegin();
-        // size_t index = Info.GetMaxIndex();
-        
-        // if(m_WorldChanged)
-        // {
-        //     bool worldChanged = false;
-            
-        //     for(; it != m_Particles.rend(); it++)
-        //     {
-        //         bool change = (*it)->Update(*this, Info.IndexToPosition(index));
-
-        //         if(change)
-        //             worldChanged = true;
-
-        //         --index;
-        //     }
-
-        //     m_WorldChanged = worldChanged;
-        // }
-
         if(m_WorldChanged)
         {
             bool worldChanged = false;
 
             for(Index i = Info.GetMaxIndex(); i >= 0; --i)
             {
+                if(m_Particles[i]->GetType() == ParticleType::NullParticle)
+                    continue;
+
                 bool change = m_Particles[i]->Update(*this, Info.IndexToPosition(i));
 
                 if(change)
@@ -73,6 +55,9 @@ namespace ParticleSimulation
 
         Index index = Info.PositionToIndex(position);
         
+        if(particle->GetType() == m_Particles[index]->GetType())
+            return false;
+
         delete m_Particles[index];
 
         m_Particles[index] = particle;
@@ -80,5 +65,12 @@ namespace ParticleSimulation
         m_WorldChanged = true;
 
         return true;
+    }
+
+    bool World::IsEmpty(Vec2 position) const
+    {
+        Index index = Info.PositionToIndex(position);
+
+        return m_Particles[index]->GetType() == ParticleType::NullParticle;
     }
 }

@@ -19,11 +19,10 @@ int main(int argc, char* argv[])
     ParticleSimulation::World simulation(ParticleSimulation::Vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
     ParticleSimulation::Renderer simulationRenderer(simulation, renderer);
     ParticleSimulation::UserInterface ui(simulation);
-
-    simulation.PlaceParticle(new ParticleSimulation::Sand, ParticleSimulation::Vec2(0, 0));
-
+    
     bool painting = false;
     bool erase = false;
+    bool sand = true;
 
     BasicClock clock;
     bool open = true;
@@ -48,6 +47,12 @@ int main(int argc, char* argv[])
                     {
                         case SDLK_ESCAPE:
                             open = false;
+                        break;
+                        case SDLK_1:
+                            sand = true;
+                        break;
+                        case SDLK_2:
+                            sand = false;
                         break;
                     }
                 } break;
@@ -76,19 +81,27 @@ int main(int argc, char* argv[])
             
             ParticleSimulation::Particle* newParticle = nullptr;
 
-            if(erase)
-                newParticle = new ParticleSimulation::NullParticle;
+            if(!erase)
+            {
+                if(sand)
+                    newParticle = new ParticleSimulation::Sand;
+                else
+                    newParticle = new ParticleSimulation::Rock;
+            }
             else
-                newParticle = new ParticleSimulation::Sand;
+                newParticle = new ParticleSimulation::NullParticle;
 
-            simulation.PlaceParticle(
+            bool result = simulation.PlaceParticle(
                 newParticle,
                 ParticleSimulation::Vec2(mouseX, mouseY)
             );
 
-            // std::cout << "Sand placed at (" << mouseX << ", " << mouseY << ") ";
-            // std::cout << "(" << mouseXF << ", " << mouseYF << ") "; 
-            // std::cout << "index: " << simulation.Info.PositionToIndex(ParticleSimulation::Vec2(mouseX, mouseY)) << std::endl;
+            // if(result)
+            // {
+            //     std::cout << "Sand placed at (" << mouseX << ", " << mouseY << ") ";
+            //     std::cout << "(" << mouseXF << ", " << mouseYF << ") "; 
+            //     std::cout << "index: " << simulation.Info.PositionToIndex(ParticleSimulation::Vec2(mouseX, mouseY)) << std::endl;
+            // }
         }
 
         ui.HandleInput();
@@ -102,6 +115,9 @@ int main(int argc, char* argv[])
             simulationRenderer.Render();
             SDL_RenderPresent(renderer);
         }
+
+        if(!simulation.WorldChanged())
+            SDL_Delay(1);
 
     }
 

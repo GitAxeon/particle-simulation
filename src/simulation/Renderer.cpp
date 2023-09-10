@@ -37,15 +37,16 @@ namespace ParticleSimulation
         
         for(Particle* particle : m_World.GetParticles())
         {
-            if(particle)
-                pixelData[index] = m_ColorMapper.Map(particle->GetColor());
-            else
+            if(particle->GetType() == ParticleType::NullParticle)
                 pixelData[index] = 0;
+            else
+                pixelData[index] = m_ColorMapper.Map(particle->GetColor());
 
             ++index;
         }
 
         SDL_UnlockTexture(m_Texture);
+        std::cout << "Texture updated" << std::endl;
     }
 
     void Renderer::Render()
