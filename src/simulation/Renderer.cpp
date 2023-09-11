@@ -46,7 +46,6 @@ namespace ParticleSimulation
         }
 
         SDL_UnlockTexture(m_Texture);
-        std::cout << "Texture updated" << std::endl;
     }
 
     void Renderer::Render()

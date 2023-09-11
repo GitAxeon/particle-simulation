@@ -12,6 +12,14 @@ namespace MMath
     template<typename U>
     using EnableNumeric = std::enable_if_t<IsNumericType<U>::value>;
 
+    template <typename T, typename U>
+    using NumericCompatibleType =
+    typename std::enable_if<
+        IsNumericType<T>::value && IsNumericType<U>::value, 
+        typename std::common_type<T, U>::type
+    >::type;
+
+
     // Functions
 
     template<typename T,typename U, typename = EnableNumeric<T>, typename = EnableNumeric<U>>
@@ -33,7 +41,6 @@ namespace MMath
     }
 
     // Classes
-
     template <typename T, typename = EnableNumeric<T>>
     class Vec2
     {
@@ -42,11 +49,7 @@ namespace MMath
         using Real = std::conditional_t<std::is_same_v<Type, double>, double, float>;
 
         template <typename U>
-        using NumericCompatibleType =
-        typename std::enable_if<IsNumericType<U>::value, typename std::common_type<Type, U>::type>::type;
-
-        template <typename U>
-        using Vec2Result = Vec2<NumericCompatibleType<U>>;
+        using Vec2Result = Vec2<NumericCompatibleType<Vec2::Type,U>>;
         
         Vec2(Type x = 0, Type y = 0) : x(x), y(y) {}
 
@@ -67,8 +70,8 @@ namespace MMath
         {
             return
             {
-                static_cast<NumericCompatibleType<U>>(x + other.x),
-                static_cast<NumericCompatibleType<U>>(y + other.y)
+                static_cast<NumericCompatibleType<T,U>>(x + other.x),
+                static_cast<NumericCompatibleType<T,U>>(y + other.y)
             };
         }
 
@@ -77,13 +80,19 @@ namespace MMath
         {
             return
             {
-                static_cast<NumericCompatibleType<U>>(x - other.x),
-                static_cast<NumericCompatibleType<U>>(y - other.y)
+                static_cast<NumericCompatibleType<T,U>>(x - other.x),
+                static_cast<NumericCompatibleType<T,U>>(y - other.y)
             };
         }
 
         template<typename U, typename = EnableNumeric<U>>
-        Vec2Result<U>& operator+=(const Vec2<U> &other)
+        bool operator==(const Vec2<U>& other) const
+        {
+            return x == other.x && y == other.y;
+        }
+
+        template<typename U, typename = EnableNumeric<U>>
+        Vec2Result<U>& operator+=(const Vec2<U>& other)
         {
             x = static_cast<Type>(x + other.x);
             y += static_cast<Type>(y + other.y);
@@ -92,7 +101,7 @@ namespace MMath
         }
 
         template<typename U, typename = EnableNumeric<U>>
-        Vec2Result<U>& operator-=(const Vec2<U> &other)
+        Vec2Result<U>& operator-=(const Vec2<U>& other)
         {
             x = static_cast<Type>(x - other.x);
             y = static_cast<Type>(y - other.y);
@@ -104,7 +113,7 @@ namespace MMath
         template <typename U>
         Vec2Result<U> operator*(U scalar) const
         {
-            return { static_cast<NumericCompatibleType<U>>(x * scalar), static_cast<NumericCompatibleType<U>>(y * scalar) };
+            return { static_cast<NumericCompatibleType<T,U>>(x * scalar), static_cast<NumericCompatibleType<T,U>>(y * scalar) };
         }
 
         // Scalar division

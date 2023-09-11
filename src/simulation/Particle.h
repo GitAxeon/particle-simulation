@@ -12,7 +12,16 @@ namespace ParticleSimulation
         Unknown,
         NullParticle,
         Sand,
-        Rock
+        Rock,
+        Water
+    };
+
+    enum class StateOfMatter
+    {
+        Unknown,
+        Solid,
+        Gas,
+        Liquid
     };
     
     class Particle
@@ -51,6 +60,13 @@ namespace ParticleSimulation
     {
     public:
         Rock() : Particle(RGBA(90, 77, 65), ParticleType::Rock) { }
+        bool Update(World& world, Vec2 position) override;
+    };
+
+    class Water : public Particle
+    {
+    public:
+        Water() : Particle(RGBA(0, 0, 255), ParticleType::Water) { }
         bool Update(World& world, Vec2 position) override;
     };
 }

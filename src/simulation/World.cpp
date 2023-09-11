@@ -30,7 +30,7 @@ namespace ParticleSimulation
     void World::Update()
     {  
         m_WorldChanged = false;
-        
+
         if(m_UpdateWorld)
         {
             bool worldChanged = false;
@@ -70,10 +70,18 @@ namespace ParticleSimulation
         return true;
     }
 
-    bool World::IsEmpty(Vec2 position) const
+    ParticleType World::ParticleAt(Vec2 position) const
     {
+        if(!Info.IsValidPosition(position))
+            return ParticleType::Unknown;
+            
         Index index = Info.PositionToIndex(position);
 
-        return m_Particles[index]->GetType() == ParticleType::NullParticle;
+        return m_Particles[index]->GetType();
+    }
+
+    bool World::IsEmpty(Vec2 position) const
+    {
+        return Info.IsValidPosition(position) && ParticleAt(position) == ParticleType::NullParticle;
     }
 }
