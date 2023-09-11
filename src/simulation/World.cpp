@@ -29,7 +29,9 @@ namespace ParticleSimulation
 
     void World::Update()
     {  
-        if(m_WorldChanged)
+        m_WorldChanged = false;
+        
+        if(m_UpdateWorld)
         {
             bool worldChanged = false;
 
@@ -44,7 +46,8 @@ namespace ParticleSimulation
                     worldChanged = true;
             }
             
-            m_WorldChanged = worldChanged;
+            m_UpdateWorld = worldChanged;
+            m_WorldChanged = true;
         }
     }
 
@@ -62,7 +65,7 @@ namespace ParticleSimulation
 
         m_Particles[index] = particle;
 
-        m_WorldChanged = true;
+        m_UpdateWorld = true;
 
         return true;
     }

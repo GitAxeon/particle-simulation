@@ -32,5 +32,6 @@ namespace ParticleSimulation
         Vec2 m_WorldSize;
         std::vector<Particle*> m_Particles;
         bool m_WorldChanged = false;
+        bool m_UpdateWorld = false;
     };
 }
