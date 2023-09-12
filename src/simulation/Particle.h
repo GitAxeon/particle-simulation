@@ -13,7 +13,8 @@ namespace ParticleSimulation
         NullParticle,
         Sand,
         Rock,
-        Water
+        Water,
+        Count
     };
 
     enum class StateOfMatter
