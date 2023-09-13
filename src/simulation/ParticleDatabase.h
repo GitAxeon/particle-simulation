@@ -1,11 +1,18 @@
 #pragma once
 
-class ParticleDatabase
-{
-public:
-    ParticleDatabase();
-    ~ParticleDatabase();
+#include "Particle.h"
 
-private:
-    
-};
+#include <set>
+
+namespace ParticleSimulation
+{
+    class ParticleDatabase
+    {
+    public:
+        ParticleDatabase();
+        ~ParticleDatabase();
+
+    private:
+        std::set<ParticleType, Particle> m_Database;
+    };
+}

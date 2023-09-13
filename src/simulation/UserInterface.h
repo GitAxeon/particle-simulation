@@ -23,7 +23,9 @@ namespace ParticleSimulation
     class UserInterface
     {
     public:
-        UserInterface(World& world, const ApplicationSpec& spec) : m_World(world), m_Spec(spec) { };
+        UserInterface(World& world, const ApplicationSpec& spec) : 
+            m_World(world), m_Spec(spec), 
+            m_BrushType(BrushType::Circular), m_CurrentTool(Tool::Brush) { };
 
         void HandleInput() const;
         void KeyDown(SDL_Event& event);
@@ -32,10 +34,20 @@ namespace ParticleSimulation
         void MouseUp(SDL_Event& event);
         void MouseWheel(SDL_Event& event);
         MMath::i32Vec2 MousePosition() const;
+    
+    private:
+        Particle* SelectedElement() const;
 
     private:
         World& m_World;
         ApplicationSpec m_Spec;
+
+        BrushType m_BrushType;
+        Tool m_CurrentTool;
+
+        int m_BrushSize = 3;
+
+        bool m_ShiftDown = false;
         bool m_Paint = false;
         bool m_Erase = false;
         float m_ElementID = 0;

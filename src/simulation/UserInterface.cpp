@@ -8,15 +8,33 @@ namespace ParticleSimulation
 
         switch(key)
         {
-            case SDLK_p:
-
+            case SDLK_1:
+                m_BrushType = BrushType::Pixel;
+            break;
+            case SDLK_2:
+                m_BrushType = BrushType::Circular;
+            break;
+            case SDLK_3:
+                m_BrushType = BrushType::Rectangular;
+            break;
+            case SDLK_LSHIFT:
+            case SDLK_RSHIFT:
+                m_ShiftDown = true;
             break;
         }
     }
 
     void UserInterface::KeyUp(SDL_Event& event)
     {
+        SDL_Keycode key = event.key.keysym.sym;
 
+        switch(key)
+        {
+            case SDLK_LSHIFT:
+            case SDLK_RSHIFT:
+                m_ShiftDown = false;
+            break;
+        }
     }
 
     void UserInterface::MouseDown(SDL_Event& event)
@@ -52,13 +70,21 @@ namespace ParticleSimulation
     {
         SDL_MouseWheelEvent wheel = e.wheel;
         
-        if(wheel.direction != SDL_MOUSEWHEEL_FLIPPED)
+        if(wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
         {
             wheel.x *= -1;
             wheel.y *= -1;
         }
 
-        m_ElementID += wheel.y;
+        if(m_ShiftDown)
+        {
+            m_BrushSize = MMath::Clamp(m_BrushSize + wheel.y, 3.f, 30.f);
+        }
+        else
+        {
+            m_ElementID = MMath::Clamp(m_ElementID + wheel.y * -1, 0.f, 4.f);
+            std::cout << "Current element ID: " << m_ElementID << std::endl;
+        }
     }
 
     MMath::i32Vec2 UserInterface::MousePosition() const
@@ -74,13 +100,63 @@ namespace ParticleSimulation
 
     void UserInterface::HandleInput() const 
     {
-        if(m_Erase)
+        if(!m_Paint && !m_Erase)
+            return;
+
+        switch(m_BrushType)
         {
-            m_World.PlaceParticle(new NullParticle, MousePosition());
+            case BrushType::Pixel:
+            {
+                m_World.PlaceParticle(SelectedElement(), MousePosition());
+            } break;
+            case BrushType::Circular:
+            {
+                MMath::i32Vec2 center = MousePosition();
+                for(int i = -m_BrushSize; i < m_BrushSize; i++)
+                {
+                    for(int j = m_BrushSize; j > -m_BrushSize; j--)
+                    {
+                        MMath::i32Vec2 position(center.x + i, center.y + j);
+                        MMath::f32Vec2 offset(i ,j);
+
+                        float distance = offset.Length();
+
+                        float circleMargin = 0.3f;
+                        if(distance <= (m_BrushSize - circleMargin))
+                            m_World.PlaceParticle(SelectedElement(), position);
+                    }
+                }
+            } break;
+            case BrushType::Rectangular:
+            {
+                MMath::i32Vec2 center = MousePosition();
+                for(int i = -m_BrushSize; i < m_BrushSize; i++)
+                {
+                    for(int j = m_BrushSize; j > -m_BrushSize; j--)
+                    {
+                        MMath::i32Vec2 position(center.x + i, center.y + j);
+                        m_World.PlaceParticle(SelectedElement(), position);
+                    }
+                }
+            } break;
         }
-        else if(m_Paint)
+    }
+
+    Particle* UserInterface::SelectedElement() const
+    {
+        if(m_Erase)
+            return new NullParticle;
+
+        switch(static_cast<int>(m_ElementID))
         {
-            m_World.PlaceParticle(new Sand, MousePosition());
+            case 0:
+                return new Sand;
+            case 1:
+                return new Rock;
+            case 2:
+                return new Water;
+            default:
+                return new NullParticle;
         }
     }
 }
