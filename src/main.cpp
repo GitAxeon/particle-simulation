@@ -88,50 +88,6 @@ int main(int argc, char* argv[])
             }
         }
 
-        // if(painting)
-        // {
-        //     float mouseXF, mouseYF;
-        //     SDL_GetMouseState(&mouseXF, &mouseYF);
-            
-        //     int mouseX = MMath::Clamp<int>(static_cast<int>(mouseXF), 0, simulation.Info.GetWidth() - 1);
-        //     int mouseY = MMath::Clamp<int>(static_cast<int>(mouseYF), 0, simulation.Info.GetHeight() - 1);
-            
-        //     ParticleSimulation::Particle* newParticle = nullptr;
-
-        //     if(!erase)
-        //     {
-        //         switch(element)
-        //         {
-        //             case 1:
-        //                 newParticle = new ParticleSimulation::Sand;
-        //             break;
-        //             case 2: 
-        //                 newParticle = new ParticleSimulation::Rock;
-        //             break;
-        //             case 3:
-        //                 newParticle = new ParticleSimulation::Water;
-        //             break;
-
-        //             default:
-        //                 newParticle = new ParticleSimulation::Sand;
-        //         }
-        //     }
-        //     else
-        //         newParticle = new ParticleSimulation::NullParticle;
-
-        //     bool result = simulation.PlaceParticle(
-        //         newParticle,
-        //         ParticleSimulation::Vec2(mouseX, mouseY)
-        //     );
-
-        //     // if(result)
-        //     // {
-        //     //     std::cout << "Sand placed at (" << mouseX << ", " << mouseY << ") ";
-        //     //     std::cout << "(" << mouseXF << ", " << mouseYF << ") "; 
-        //     //     std::cout << "index: " << simulation.Info.PositionToIndex(ParticleSimulation::Vec2(mouseX, mouseY)) << std::endl;
-        //     // }
-        // }
-
         ui.HandleInput();
         simulation.Update();
         
