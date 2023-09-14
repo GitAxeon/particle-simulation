@@ -3,6 +3,9 @@
 #include "simulation/ParticleSimulation.h"
 
 #include <SDL3/SDL.h>
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_sdlrenderer3.h>
 
 #include <string>
 #include <ctime>
@@ -15,8 +18,18 @@ int main(int argc, char* argv[])
 
     ApplicationSpec spec;
 
-    SDL_Window* window = SDL_CreateWindow("particle-simulation", spec.WindowSize.x, spec.WindowSize.y, 0);
+    SDL_Window* window = SDL_CreateWindow("Particle simulation", spec.WindowSize.x, spec.WindowSize.y, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+    ImGui::StyleColorsLight();
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
 
     ParticleSimulation::World simulation(spec.WindowSize);
     ParticleSimulation::Renderer simulationRenderer(simulation, renderer);
@@ -34,11 +47,14 @@ int main(int argc, char* argv[])
     {
         clock.Tick();
 
-        SDL_SetWindowTitle(window, std::to_string(1.0/clock.DeltaSeconds()).c_str());
-
         SDL_Event e;
         while(SDL_PollEvent(&e))
         {
+            ImGui_ImplSDL3_ProcessEvent(&e);
+
+            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
+                continue;
+
             switch(e.type)
             {
                 case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
@@ -92,18 +108,30 @@ int main(int argc, char* argv[])
         simulation.Update();
         
         // Render a thing
+        
+        ImGui_ImplSDL3_NewFrame();
+        ImGui_ImplSDLRenderer3_NewFrame();
+        ImGui::NewFrame();
+        
+        ui.Render(clock.DeltaSeconds());
+        ImGui::Render();
 
-        if(simulation.WorldChanged())
-        {
-            SDL_RenderClear(renderer);
-            simulationRenderer.Render();
-            SDL_RenderPresent(renderer);
-        }
+        SDL_RenderClear(renderer);
+
+        simulationRenderer.Render();
+
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData());
+
+        SDL_RenderPresent(renderer);
 
         if(!simulation.WorldChanged())
             SDL_Delay(1);
 
     }
+    
+    ImGui_ImplSDL3_Shutdown();
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui::DestroyContext();
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

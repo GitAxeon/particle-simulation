@@ -27,13 +27,19 @@ namespace ParticleSimulation
             m_World(world), m_Spec(spec), 
             m_BrushType(BrushType::Circular), m_CurrentTool(Tool::Brush) { };
 
-        void HandleInput() const;
+        void HandleInput();
         void KeyDown(SDL_Event& event);
         void KeyUp(SDL_Event& event);
         void MouseDown(SDL_Event& event);
         void MouseUp(SDL_Event& event);
         void MouseWheel(SDL_Event& event);
         MMath::i32Vec2 MousePosition() const;
+
+        void Render(float deltaTime);
+
+        Tool CurrentTool() const { return m_CurrentTool; }
+        BrushType CurrentBrush() const { return m_BrushType; }
+        int BrushSize() const { return m_BrushSize; }
     
     private:
         Particle* SelectedElement() const;
@@ -44,12 +50,13 @@ namespace ParticleSimulation
 
         BrushType m_BrushType;
         Tool m_CurrentTool;
+        int m_CurrentBrushTypeNumber = 0;
 
         int m_BrushSize = 3;
 
         bool m_ShiftDown = false;
         bool m_Paint = false;
         bool m_Erase = false;
-        float m_ElementID = 0;
+        int m_ElementID = 0;
     };
 }

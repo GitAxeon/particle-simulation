@@ -1,5 +1,9 @@
 #include "UserInterface.h"
 
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_sdlrenderer3.h>
+
 namespace ParticleSimulation
 {
     void UserInterface::KeyDown(SDL_Event& event)
@@ -80,11 +84,6 @@ namespace ParticleSimulation
         {
             m_BrushSize = MMath::Clamp(m_BrushSize + wheel.y, 3.f, 30.f);
         }
-        else
-        {
-            m_ElementID = MMath::Clamp(m_ElementID + wheel.y * -1, 0.f, 4.f);
-            std::cout << "Current element ID: " << m_ElementID << std::endl;
-        }
     }
 
     MMath::i32Vec2 UserInterface::MousePosition() const
@@ -98,8 +97,20 @@ namespace ParticleSimulation
         return MMath::i32Vec2(mouseX, mouseY);
     }
 
-    void UserInterface::HandleInput() const 
+    void UserInterface::HandleInput() 
     {
+        switch(m_CurrentBrushTypeNumber)
+        {
+            case 0:
+                m_BrushType = BrushType::Pixel;
+            break;
+            case 1:
+                m_BrushType = BrushType::Circular;
+            break;
+            case 2:
+                m_BrushType = BrushType::Rectangular;
+            break;
+        };
         if(!m_Paint && !m_Erase)
             return;
 
@@ -147,7 +158,7 @@ namespace ParticleSimulation
         if(m_Erase)
             return new NullParticle;
 
-        switch(static_cast<int>(m_ElementID))
+        switch(m_ElementID)
         {
             case 0:
                 return new Sand;
@@ -158,5 +169,59 @@ namespace ParticleSimulation
             default:
                 return new NullParticle;
         }
+    }
+
+    void UserInterface::Render(float deltaTime)
+    {
+        // ImGui::SetNextWindowSize(ImVec2(250, 125));
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+
+        ImGuiWindowFlags flags = ImGuiWindowFlags_None;
+        flags |= ImGuiWindowFlags_NoTitleBar;
+        flags |= ImGuiWindowFlags_NoMove;
+        flags |= ImGuiWindowFlags_NoResize;
+        flags |= ImGuiWindowFlags_NoSavedSettings;
+        flags |= ImGuiWindowFlags_AlwaysAutoResize;
+        flags |= ImGuiWindowFlags_NoNav;
+
+        ImGui::Begin("Tools!", nullptr, flags);
+
+        ImGui::Text("Current tool: %s", (!m_Erase ? "Brush" : "Eraser"));
+
+        ImGui::Text("Brush type"); ImGui::SameLine();
+        const char* brushTypes[] = { "Pixel", "Circular", "Rectangular" };
+        ImGui::Combo("##BrushTypeCombo", &m_CurrentBrushTypeNumber, brushTypes, 3, 3);
+
+        if(m_CurrentBrushTypeNumber != 0)
+        {   
+            ImGui::Text("Size"); ImGui::SameLine();
+            ImGui::SliderInt("##BrushSizeSlider", &m_BrushSize, 3, 30);
+        }
+
+        ImGui::Text("Element"); ImGui::SameLine();
+        const char* elements[] = { "Sand", "Rock", "Water", "Null" };
+        ImGui::Combo("##ElementCombo", &m_ElementID, elements, 4, 4);
+        
+        ImGui::End();
+
+        ImGui::SetNextWindowPos(ImVec2(
+            m_World.Info.GetWidth() - 35,
+            0
+        ));
+
+        ImGuiWindowFlags fpsFlags = ImGuiWindowFlags_None;
+        fpsFlags |= ImGuiWindowFlags_NoNav;
+        fpsFlags |= ImGuiWindowFlags_AlwaysAutoResize;
+        fpsFlags |= ImGuiWindowFlags_NoResize;
+        fpsFlags |= ImGuiWindowFlags_NoBackground;
+        fpsFlags |= ImGuiWindowFlags_NoTitleBar;
+
+        ImGui::Begin("FPS", nullptr, fpsFlags);
+        
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,255,255,255));
+            ImGui::Text("%.0f", 1.0/deltaTime);
+        ImGui::PopStyleColor();
+        
+        ImGui::End();
     }
 }
