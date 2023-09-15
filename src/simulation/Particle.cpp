@@ -3,109 +3,145 @@
 
 namespace ParticleSimulation
 {
-    bool Particle::Update(World& world, Vec2 position) { return false; }
-
-    bool NullParticle::Update(World& world, Vec2 position) { return false; }
-
-    bool Sand::Update(World& world, Vec2 position)
+    bool Particle::Update(World& world, Vec2 position)
     {
-        Vec2 below = Vec2(position.x, position.y + 1);
-        Vec2 downLeft = Vec2(position.x - 1, position.y + 1);
-        Vec2 downRight = Vec2(position.x + 1, position.y + 1);
-        
-        bool canFall = world.IsEmpty(below) || world.ParticleAt(below) == ParticleType::Water;
-        bool canMoveLeft = world.IsEmpty(downLeft)  || world.ParticleAt(downLeft) == ParticleType::Water;
-        bool canMoveRight = world.IsEmpty(downRight) || world.ParticleAt(downRight) == ParticleType::Water;
-        
-        Vec2 newPosition;
-
-        if(canFall)
+        switch(ID)
         {
-            newPosition = below;
-        }
-        else if(canMoveLeft && canMoveRight)
-        {
-            int random = std::rand() % 2;
-
-            if(random == 0)
+            case Element::Sand:
             {
-                newPosition = downLeft;
-            }
-            else
+                Vec2 below = Vec2(position.x, position.y + 1);
+                bool waterBelow = world.ParticleAt(below) == Element::Water;
+                bool canFall = world.IsEmpty(below) || waterBelow;
+
+                Vec2 newPosition;
+
+                if(canFall)
+                {
+                    if(waterBelow)
+                        world.PlaceParticle(Element::Water, position);
+                    else
+                        world.PlaceParticle(Element::Null, position);
+
+                    world.PlaceParticle(Element::Sand, below);
+
+                    return true;
+                }
+                
+                Vec2 left(position.x - 1, position.y);
+                Vec2 downLeft = Vec2(position.x - 1, position.y + 1);
+
+                Vec2 right(position.x + 1, position.y);
+                Vec2 downRight = Vec2(position.x + 1, position.y + 1);
+
+                bool canMoveLeft = world.IsEmpty(left) && world.IsEmpty(downLeft);
+                bool canMoveRight = world.IsEmpty(right) && world.IsEmpty(downRight);
+
+                if(canMoveLeft && canMoveRight)
+                {
+                    int random = std::rand() % 2;
+
+                    if(random == 0)
+                    {
+                        world.PlaceParticle(Element::Null, position);
+                        world.PlaceParticle(Element::Sand, downLeft);
+                    }
+                    else
+                    {
+                        world.PlaceParticle(Element::Null, position);
+                        world.PlaceParticle(Element::Sand, downRight);
+                    }
+                }
+                else if(canMoveLeft)
+                {
+                    world.PlaceParticle(Element::Null, position);
+                    world.PlaceParticle(Element::Sand, downLeft);
+                }
+                else if(canMoveRight)
+                {
+                    world.PlaceParticle(Element::Null, position);
+                    world.PlaceParticle(Element::Sand, downRight);
+                }
+                else 
+                {
+                    return false;
+                }
+
+                return true;
+            } break;
+
+            case Element::Water:
             {
-                newPosition = downRight;
-            }
-        }
-        else if(canMoveLeft)
-        {
-            newPosition = downLeft;
-        }
-        else if(canMoveRight)
-        {
-            newPosition = downRight; 
-        }
-        else
-        {
-            return false;
+                Vec2 below = Vec2(position.x, position.y + 1);
+                bool canFall = world.IsEmpty(below);
+
+                Vec2 newPosition;
+
+                if(canFall)
+                {
+                    world.PlaceParticle(Element::Null, position);
+                    world.PlaceParticle(Element::Water, below);
+
+                    return true;
+                }
+                
+                Vec2 left(position.x - 1, position.y);
+                Vec2 right(position.x + 1, position.y);
+                bool waterOnLeft = world.ParticleAt(left) == Element::Water;
+                bool waterOnRight = world.ParticleAt(right) == Element::Water;
+
+                bool canMoveLeft = world.IsEmpty(left) || waterOnLeft;
+                bool canMoveRight = world.IsEmpty(right) || waterOnRight;
+
+                if(canMoveLeft && canMoveRight)
+                {
+                    int random = std::rand() % 2;
+
+                    if(random == 0)
+                    {
+                        if(waterOnLeft)
+                            world.PlaceParticle(Element::Water, position);
+                        else
+                            world.PlaceParticle(Element::Null, position);
+                        
+                        world.PlaceParticle(Element::Water, left);
+                    }
+                    else
+                    {
+                        if(waterOnRight)
+                            world.PlaceParticle(Element::Water, position);
+                        else
+                            world.PlaceParticle(Element::Null, position);
+
+                        world.PlaceParticle(Element::Water, right);
+                    }
+                }
+                else if(canMoveLeft)
+                {
+                    if(waterOnLeft)
+                        world.PlaceParticle(Element::Water, position);
+                    else
+                        world.PlaceParticle(Element::Null, position);
+
+                    world.PlaceParticle(Element::Water, left);
+                }
+                else if(canMoveRight)
+                {
+                    if(waterOnRight)
+                        world.PlaceParticle(Element::Water, position);
+                    else
+                        world.PlaceParticle(Element::Null, position);
+
+                    world.PlaceParticle(Element::Water, right);
+                }
+                else 
+                {
+                    return false;
+                }
+
+                return true;
+            } break;
         }
 
-        if(world.ParticleAt(newPosition) == ParticleType::Water)
-            world.PlaceParticle(new Water, position);
-        else
-            world.PlaceParticle(new NullParticle, position);
-        
-        world.PlaceParticle(new Sand, newPosition);
-        
-        return true;
-    }
-
-    bool Rock::Update(World& world, Vec2 position) { return false; }
-
-    bool Water::Update(World& world, Vec2 position)
-    {
-        Vec2 below = Vec2(position.x, position.y + 1);
-        Vec2 left = Vec2(position.x - 1, position.y);
-        Vec2 right = Vec2(position.x + 1, position.y);
-
-        bool canFall = world.IsEmpty(below);
-        bool canMoveLeft = world.IsEmpty(left);
-        bool canMoveRight = world.IsEmpty(right);
-
-        Vec2 newPosition;
-
-        if(canFall)
-        {
-            newPosition = below;
-        }
-        else if(canMoveLeft && canMoveRight)
-        {
-            int random = std::rand() % 2;
-
-            if(random == 0)
-            {
-                newPosition = left;
-            }
-            else
-            {
-                newPosition = right;
-            }
-        }
-        else if(canMoveLeft)
-        {
-            newPosition = left;
-        }
-        else if(canMoveRight)
-        {
-            newPosition = right;   
-        }
-        else
-        {
-            return false;
-        }
-
-        world.PlaceParticle(new NullParticle, position);
-        world.PlaceParticle(new Water, newPosition);
-
-        return true;  
+        return false;
     }
 }

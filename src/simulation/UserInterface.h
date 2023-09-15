@@ -1,7 +1,6 @@
 #pragma once
 
 #include "World.h"
-// #include "Math.h"
 
 #include <SDL3/SDL.h>
 
@@ -42,7 +41,7 @@ namespace ParticleSimulation
         int BrushSize() const { return m_BrushSize; }
     
     private:
-        Particle* SelectedElement() const;
+        ElementID SelectedElement() const;
 
     private:
         World& m_World;

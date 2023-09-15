@@ -1,5 +1,4 @@
 #include "World.h"
-#include "Particle.h"
 
 namespace ParticleSimulation
 {
@@ -8,23 +7,12 @@ namespace ParticleSimulation
         Info = WorldInfo(worldSize);
         m_WorldSize = worldSize;
         
-        m_Particles.resize(worldSize.x * worldSize.y, nullptr);
+        m_Particles.resize(worldSize.x * worldSize.y, Particle(Element::Null));
 
-        for(size_t i = 0; i < m_Particles.size(); i++)
-        {
-            m_Particles[i] = new NullParticle;
-        }
-
-        // delete m_Particles[0];
-        // m_Particles[0] = new Sand;
-    }
-
-    World::~World()
-    {
-        for(auto ptr : m_Particles)
-        {
-            delete ptr;
-        }
+        m_ParticleDatabase.Insert(Particle(Element::Sand, RGBA(194, 178, 128)));
+        m_ParticleDatabase.Insert(Particle(Element::Water, RGBA(0, 0, 255)));
+        m_ParticleDatabase.Insert(Particle(Element::Rock, RGBA(90, 77, 65)));
+        m_ParticleDatabase.Insert(Particle(Element::Null, RGBA(0, 0, 0, 255)));
     }
 
     void World::Update()
@@ -37,10 +25,10 @@ namespace ParticleSimulation
 
             for(Index i = Info.GetMaxIndex(); i >= 0; --i)
             {
-                if(m_Particles[i]->GetType() == ParticleType::NullParticle)
+                if(m_Particles[i].ID == Element::Null)
                     continue;
 
-                bool change = m_Particles[i]->Update(*this, Info.IndexToPosition(i));
+                bool change = m_Particles[i].Update(*this, Info.IndexToPosition(i));
 
                 if(change)
                     worldChanged = true;
@@ -51,37 +39,35 @@ namespace ParticleSimulation
         }
     }
 
-    bool World::PlaceParticle(Particle* particle, Vec2 position)
+    bool World::PlaceParticle(ElementID id, Vec2 position)
     {
         if(!Info.IsValidPosition(position))
             return false;
 
         Index index = Info.PositionToIndex(position);
         
-        if(particle->GetType() == m_Particles[index]->GetType())
+        if(id == m_Particles[index].ID)
             return false;
 
-        delete m_Particles[index];
-
-        m_Particles[index] = particle;
+        m_Particles[index] = m_ParticleDatabase.Get(id);
 
         m_UpdateWorld = true;
 
         return true;
     }
 
-    ParticleType World::ParticleAt(Vec2 position) const
+    ElementID World::ParticleAt(Vec2 position) const
     {
         if(!Info.IsValidPosition(position))
-            return ParticleType::Unknown;
+            return Element::Unknown;
             
         Index index = Info.PositionToIndex(position);
 
-        return m_Particles[index]->GetType();
+        return m_Particles[index].ID;
     }
 
     bool World::IsEmpty(Vec2 position) const
     {
-        return Info.IsValidPosition(position) && ParticleAt(position) == ParticleType::NullParticle;
+        return Info.IsValidPosition(position) && ParticleAt(position) == Element::Null;
     }
 }

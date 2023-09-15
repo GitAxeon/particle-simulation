@@ -153,21 +153,21 @@ namespace ParticleSimulation
         }
     }
 
-    Particle* UserInterface::SelectedElement() const
+    ElementID UserInterface::SelectedElement() const
     {
         if(m_Erase)
-            return new NullParticle;
+            return Element::Null;
 
         switch(m_ElementID)
         {
             case 0:
-                return new Sand;
+                return Element::Sand;
             case 1:
-                return new Rock;
+                return Element::Rock;
             case 2:
-                return new Water;
+                return Element::Water;
             default:
-                return new NullParticle;
+                return Element::Null;
         }
     }
 

@@ -35,6 +35,8 @@ int main(int argc, char* argv[])
     ParticleSimulation::Renderer simulationRenderer(simulation, renderer);
     ParticleSimulation::UserInterface ui(simulation, spec);
 
+    simulation.PlaceParticle(ParticleSimulation::Element::Sand, ParticleSimulation::Vec2(0, 0));
+
     bool painting = false;
     bool erase = false;
 

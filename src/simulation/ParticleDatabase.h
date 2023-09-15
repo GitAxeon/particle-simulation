@@ -1,18 +1,17 @@
 #pragma once
 
 #include "Particle.h"
-
-#include <set>
+#include <map>
 
 namespace ParticleSimulation
-{
+{   
     class ParticleDatabase
     {
     public:
-        ParticleDatabase();
-        ~ParticleDatabase();
+        bool Insert(Particle);
+        Particle Get(ElementID) const;
 
     private:
-        std::set<ParticleType, Particle> m_Database;
+        std::map<ElementID, Particle> m_Database;
     };
 }
