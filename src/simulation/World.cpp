@@ -56,6 +56,21 @@ namespace ParticleSimulation
         return true;
     }
 
+    bool World::SwapParticle(Vec2 positionA, Vec2 positionB)
+    {
+        if(!Info.IsValidPosition(positionA) || !Info.IsValidPosition(positionB))
+            return false;
+
+        Index indexA = Info.PositionToIndex(positionA);
+        Index indexB = Info.PositionToIndex(positionB);
+
+        std::swap(m_Particles[indexA], m_Particles[indexB]);
+
+        m_UpdateWorld = true;
+
+        return true;
+    }
+
     ElementID World::ParticleAt(Vec2 position) const
     {
         if(!Info.IsValidPosition(position))

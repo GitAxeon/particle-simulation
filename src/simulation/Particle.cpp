@@ -108,21 +108,27 @@ namespace ParticleSimulation
                     else
                     {
                         if(waterOnRight)
-                            world.PlaceParticle(Element::Water, position);
+                        {
+                            world.SwapParticle(position, right);
+                        }
                         else
+                        {
                             world.PlaceParticle(Element::Null, position);
-
-                        world.PlaceParticle(Element::Water, right);
+                            world.PlaceParticle(Element::Water, right);
+                        }
                     }
                 }
                 else if(canMoveLeft)
                 {
                     if(waterOnLeft)
-                        world.PlaceParticle(Element::Water, position);
+                    {
+                        world.SwapParticle(position, left);
+                    }
                     else
+                    {
                         world.PlaceParticle(Element::Null, position);
-
-                    world.PlaceParticle(Element::Water, left);
+                        world.PlaceParticle(Element::Water, left);
+                    }
                 }
                 else if(canMoveRight)
                 {

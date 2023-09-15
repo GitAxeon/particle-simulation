@@ -17,6 +17,7 @@ namespace ParticleSimulation
         void Update();
         
         bool PlaceParticle(ElementID, Vec2 position);
+        bool SwapParticle(Vec2 positionA, Vec2 positionB);
 
         bool IsEmpty(Vec2 position) const;
 
