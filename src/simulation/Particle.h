@@ -19,6 +19,10 @@ namespace ParticleSimulation
             MatterState = StateOfMatter::Unknown;
             Sleep = true;
 
+            Temperature = 0.f;
+            Flammability = 0.f;
+            CorrosionResistance = 0.f;
+
             Behaviour = nullptr;
         }
 
@@ -26,6 +30,10 @@ namespace ParticleSimulation
         RGBA Color;
         StateOfMatter MatterState;
         bool Sleep;
+
+        float Temperature;
+        float Flammability;
+        float CorrosionResistance;
 
         ParticleBehaviour* Behaviour;
     };

@@ -24,7 +24,7 @@ namespace ParticleSimulation
     public:
         UserInterface(World& world, const ApplicationSpec& spec) : 
             m_World(world), m_Spec(spec), 
-            m_BrushType(BrushType::Circular), m_CurrentTool(Tool::Brush) { };
+            m_BrushType(BrushType::Pixel), m_CurrentTool(Tool::Brush) { };
 
         void HandleInput();
         void KeyDown(SDL_Event& event);
@@ -56,6 +56,6 @@ namespace ParticleSimulation
         bool m_ShiftDown = false;
         bool m_Paint = false;
         bool m_Erase = false;
-        int m_ElementID = 0;
+        int m_ElementID = 1;
     };
 }

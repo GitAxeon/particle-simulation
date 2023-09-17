@@ -9,54 +9,107 @@ namespace ParticleSimulation
         Info = WorldInfo(worldSize);
         m_WorldSize = worldSize;
         
-        m_Particles.resize(worldSize.x * worldSize.y, m_ParticleDatabase.Get(0));
+        m_Particles.resize(worldSize.x * worldSize.y, m_ParticleDatabase.GetParticle(0));
+
+        m_ParticleDatabase.InsertBehaviour("Sand", new SandBehaviour);
+        m_ParticleDatabase.InsertBehaviour("Water", new WaterBehaviour);
+        m_ParticleDatabase.InsertBehaviour("Acid", new AcidBehaviour);
 
         ParticleData sandData;
         sandData.Id = 1;
         sandData.Color = RGBA(194, 178, 128);
-        sandData.Behaviour = new SandBehaviour;
         sandData.MatterState = StateOfMatter::Solid;
         sandData.Sleep = false;
+        sandData.Flammability = 0.f;
+        sandData.Temperature = 0.f;
+        sandData.CorrosionResistance = 0.4f;
+        sandData.Behaviour = m_ParticleDatabase.GetBehaviour("Sand");
 
         ParticleInfo sand;
         sand.Name = "Sand";
         sand.Data = sandData;
 
-        m_ParticleDatabase.Insert(sand);
+        m_ParticleDatabase.InsertParticle(sand);
 
         ParticleData waterData;
         waterData.Id = 2;
         waterData.Color = RGBA(0, 0, 255);
-        waterData.Behaviour = new WaterBehaviour;
         waterData.MatterState = StateOfMatter::Liquid;
         waterData.Sleep = false;
+        waterData.Flammability = 0.f;
+        waterData.Temperature = 0.f;
+        waterData.CorrosionResistance = 0.3f;
+        waterData.Behaviour = m_ParticleDatabase.GetBehaviour("Water");
 
         ParticleInfo water;
         water.Name = "Water";
         water.Data = waterData;
 
-        m_ParticleDatabase.Insert(water);
+        m_ParticleDatabase.InsertParticle(water);
 
         ParticleData rockData;
         rockData.Id = 3;
         rockData.Color = RGBA(90, 77, 65);
-        rockData.Behaviour = nullptr;
         rockData.MatterState = StateOfMatter::Solid;
         rockData.Sleep = true;
+        rockData.Flammability = 0.f;
+        rockData.Temperature = 0.f;
+        rockData.CorrosionResistance = 0.78f;
+        rockData.Behaviour = nullptr;
 
         ParticleInfo rock;
         rock.Name = "Rock";
         rock.Data = rockData;
 
-        m_ParticleDatabase.Insert(rock);
-        
-        // m_ParticleDatabase.Insert(Particle(Element::Sand, RGBA(194, 178, 128)));
+        m_ParticleDatabase.InsertParticle(rock);
 
-        // m_ParticleDatabase.Insert(Particle(Element::Water, RGBA(0, 0, 255)));
-        
-        // m_ParticleDatabase.Insert(Particle(Element::Rock, RGBA(90, 77, 65)));
-        
-        // m_ParticleDatabase.Insert(Particle(Element::Null, RGBA(0, 0, 0, 255)));
+        ParticleData woodData;
+        woodData.Id = 4;
+        woodData.Color = RGBA(186, 140, 99);
+        woodData.MatterState = StateOfMatter::Solid;
+        woodData.Sleep = true;
+        woodData.Flammability = 0.8f;
+        woodData.Temperature = 0.f;
+        woodData.CorrosionResistance = 0.2f;
+        woodData.Behaviour = nullptr;
+
+        ParticleInfo wood;
+        wood.Name = "Wood";
+        wood.Data = woodData;
+
+        m_ParticleDatabase.InsertParticle(wood);
+
+        ParticleData acidData;
+        acidData.Id = 5;
+        acidData.Color = RGBA(118, 187, 104);
+        acidData.MatterState = StateOfMatter::Liquid;
+        acidData.Sleep = true;
+        acidData.Flammability = 0.7f;
+        acidData.Temperature = 0.f;
+        acidData.CorrosionResistance = 1.f;
+        acidData.Behaviour = m_ParticleDatabase.GetBehaviour("Acid");
+
+        ParticleInfo acid;
+        acid.Name = "Acid";
+        acid.Data = acidData;
+
+        m_ParticleDatabase.InsertParticle(acid);
+
+        ParticleData stainlesStell;
+        stainlesStell.Id = 6;
+        stainlesStell.Color = RGBA(180,189,199);
+        stainlesStell.MatterState = StateOfMatter::Solid;
+        stainlesStell.Sleep = true;
+        stainlesStell.Flammability = 0.f;
+        stainlesStell.Temperature = 0.f;
+        stainlesStell.CorrosionResistance = 1.f;
+        stainlesStell.Behaviour = nullptr;
+
+        ParticleInfo ssteel;
+        ssteel.Name = "Stainless steel";
+        ssteel.Data = stainlesStell;
+
+        m_ParticleDatabase.InsertParticle(ssteel);
     }
 
     void World::Update()
@@ -115,7 +168,7 @@ namespace ParticleSimulation
     ParticleData World::ParticleAt(Vec2 position) const
     {
         if(!Info.IsValidPosition(position))
-            return m_ParticleDatabase.Get(0);
+            return m_ParticleDatabase.GetParticle(0);
             
         Index index = Info.PositionToIndex(position);
 

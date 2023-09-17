@@ -10,7 +10,7 @@ namespace ParticleSimulation
         bool Update(World& world, ParticleData& particle, Vec2 position)
         {
             const ParticleDatabase& pdb = world.GetParticleDatabase();
-            ParticleData nullparticle = pdb.Get(0);
+            ParticleData nullparticle = pdb.GetParticle(0);
 
             Vec2 below = Vec2(position.x, position.y + 1);
             bool liquidBelow = world.ParticleAt(below).MatterState == StateOfMatter::Liquid;
@@ -93,15 +93,6 @@ namespace ParticleSimulation
                 int random = std::rand() % 2;
 
                 world.SwapParticle(position, random ? left : right);
-
-                // if(random == 0)
-                // {
-                //     world.SwapParticle(position, left);
-                // }
-                // else
-                // {
-                //     world.SwapParticle(position, right);
-                // }
             }
             else if(canMoveLeft)
             {
@@ -117,6 +108,79 @@ namespace ParticleSimulation
             }
 
             return true;
+        }
+    };
+
+    class AcidBehaviour : public ParticleBehaviour
+    {
+        bool Update(World& world, ParticleData& particle, Vec2 position)
+        {
+            Vec2 below = Vec2(position.x, position.y + 1);
+            bool canFall = world.IsEmpty(below);
+
+            Vec2 newPosition;
+
+            if(canFall)
+            {
+                world.SwapParticle(position, below);
+
+                return true;
+            }
+
+            // Corrosive behaviour
+            for(int y = -1; y <= 1; y++)
+            {
+                for(int x = -1; x <= 1; x++)
+                {
+                    Vec2 offset(x, y);
+                    Vec2 testPosition = position + offset;
+
+                    if(testPosition == position)
+                        continue;
+
+                    ParticleData other = world.ParticleAt(testPosition);
+                    if(other.MatterState != StateOfMatter::Liquid && other.CorrosionResistance < 1.0f)
+                    {
+                        float random = static_cast<float>(static_cast<double>(rand()) / static_cast<double>(RAND_MAX));
+
+                        if(random > other.CorrosionResistance)
+                        {
+                            world.PlaceParticle(world.GetParticleDatabase().GetParticle(0), testPosition);
+                        }
+                    }
+                }
+            }
+
+            Vec2 left(position.x - 1, position.y);
+            Vec2 right(position.x + 1, position.y);
+            
+            bool liquidOnLeft = world.ParticleAt(left).MatterState == StateOfMatter::Liquid;
+            bool liquidOnRight = world.ParticleAt(right).MatterState == StateOfMatter::Liquid;
+
+            bool canMoveLeft = world.IsEmpty(left) || liquidOnLeft;
+            bool canMoveRight = world.IsEmpty(right) || liquidOnRight;
+
+            bool moved = false;
+
+            if(canMoveLeft && canMoveRight)
+            {
+                int random = std::rand() % 2;
+
+                world.SwapParticle(position, random ? left : right);
+                moved = true;
+            }
+            else if(canMoveLeft)
+            {
+                world.SwapParticle(position, left);
+                moved = true;
+            }
+            else if(canMoveRight)
+            {
+                world.SwapParticle(position, right);
+                moved = true;
+            }
+
+            return moved;
         }
     };
 }

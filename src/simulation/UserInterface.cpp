@@ -118,10 +118,7 @@ namespace ParticleSimulation
         {
             case BrushType::Pixel:
             {
-                bool res = m_World.PlaceParticle(m_World.GetParticleDatabase().Get(SelectedElement()) , MousePosition());
-                
-                if(res)
-                    std::cout << "Placed particle id: " << SelectedElement() << std::endl;
+                m_World.PlaceParticle(m_World.GetParticleDatabase().GetParticle(SelectedElement()) , MousePosition());
             } break;
             case BrushType::Circular:
             {
@@ -137,7 +134,7 @@ namespace ParticleSimulation
 
                         float circleMargin = 0.3f;
                         if(distance <= (m_BrushSize - circleMargin))
-                            m_World.PlaceParticle(m_World.GetParticleDatabase().Get(SelectedElement()), position);
+                            m_World.PlaceParticle(m_World.GetParticleDatabase().GetParticle(SelectedElement()), position);
                     }
                 }
             } break;
@@ -149,7 +146,7 @@ namespace ParticleSimulation
                     for(int j = m_BrushSize; j > -m_BrushSize; j--)
                     {
                         MMath::i32Vec2 position(center.x + i, center.y + j);
-                        m_World.PlaceParticle(m_World.GetParticleDatabase().Get(SelectedElement()), position);
+                        m_World.PlaceParticle(m_World.GetParticleDatabase().GetParticle(SelectedElement()), position);
                     }
                 }
             } break;
@@ -160,23 +157,12 @@ namespace ParticleSimulation
     {
         if(m_Erase)
             return 0;
-
-        switch(m_ElementID)
-        {
-            case 0:
-                return 1;
-            case 1:
-                return 2;
-            case 2:
-                return 3;
-            default:
-                return 4;
-        }
+        
+        return m_ElementID;
     }
 
     void UserInterface::Render(float deltaTime)
     {
-        // ImGui::SetNextWindowSize(ImVec2(250, 125));
         ImGui::SetNextWindowPos(ImVec2(0, 0));
 
         ImGuiWindowFlags flags = ImGuiWindowFlags_None;
@@ -202,8 +188,14 @@ namespace ParticleSimulation
         }
 
         ImGui::Text("Element"); ImGui::SameLine();
-        const char* elements[] = { "Sand", "Rock", "Water", "Null" };
-        ImGui::Combo("##ElementCombo", &m_ElementID, elements, 4, 4);
+        std::vector<const char*> elements2;
+
+        for(const auto& element : m_World.GetParticleDatabase().GetParticles())
+        {
+            elements2.emplace_back(element.second.Name.c_str());
+        } 
+
+        ImGui::Combo("##ElementCombo", &m_ElementID, elements2.data(), elements2.size(), 4);
         
         ImGui::End();
 

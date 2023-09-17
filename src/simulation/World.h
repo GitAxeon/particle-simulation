@@ -21,7 +21,7 @@ namespace ParticleSimulation
 
         ParticleData ParticleAt(Vec2 position) const;
 
-        const ParticleDatabase& GetParticleDatabase() const { return m_ParticleDatabase; } 
+        ParticleDatabase& GetParticleDatabase() { return m_ParticleDatabase; } 
         std::vector<ParticleData>& GetParticles() { return m_Particles; }
         
         bool WorldChanged() const { return m_WorldChanged; }

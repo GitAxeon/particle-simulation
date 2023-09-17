@@ -10,29 +10,51 @@ namespace ParticleSimulation
         nulldata.Color = RGBA(0, 0, 0);
         nulldata.MatterState = StateOfMatter::Unknown;
         nulldata.Sleep = true;
+        
+        nulldata.Flammability = 0.f;
+        nulldata.Temperature = 0.f;
+        nulldata.CorrosionResistance = 1.f;
+        
         nulldata.Behaviour = nullptr;
 
         ParticleInfo NullParticle;
         NullParticle.Name = "Null";
         NullParticle.Data = nulldata;
 
-        m_Database.insert(std::pair(0, NullParticle));
+        InsertParticle(NullParticle);
     }
 
-    bool ParticleDatabase::Insert(const ParticleInfo& info)
+    bool ParticleDatabase::InsertParticle(const ParticleInfo& info)
     {
-        auto result = m_Database.insert(std::pair(info.Data.Id, info));
+        auto result = m_ParticleDatabase.insert(std::pair(info.Data.Id, info));
 
         return result.second;
     }
 
-    ParticleData ParticleDatabase::Get(ParticleID id) const
+    ParticleData ParticleDatabase::GetParticle(ParticleID id) const
     {
-        auto result = m_Database.find(id);
+        auto result = m_ParticleDatabase.find(id);
 
-        if(result != m_Database.end())
+        if(result != m_ParticleDatabase.end())
             return result->second.Data;
         else
-            return m_Database.at(0).Data;
+            return m_ParticleDatabase.at(0).Data;
+    }
+
+    bool ParticleDatabase::InsertBehaviour(const std::string& name, ParticleBehaviour* behaviour)
+    {
+        auto result = m_BehaviourDatabase.insert(std::pair(name, behaviour));
+
+        return result.second;
+    }
+
+    ParticleBehaviour* ParticleDatabase::GetBehaviour(const std::string& name) const
+    {
+        auto result = m_BehaviourDatabase.find(name);
+
+        if(result != m_BehaviourDatabase.end())
+            return result->second;
+        else
+            return nullptr;
     }
 }
