@@ -118,7 +118,10 @@ namespace ParticleSimulation
         {
             case BrushType::Pixel:
             {
-                m_World.PlaceParticle(SelectedElement(), MousePosition());
+                bool res = m_World.PlaceParticle(m_World.GetParticleDatabase().Get(SelectedElement()) , MousePosition());
+                
+                if(res)
+                    std::cout << "Placed particle id: " << SelectedElement() << std::endl;
             } break;
             case BrushType::Circular:
             {
@@ -134,7 +137,7 @@ namespace ParticleSimulation
 
                         float circleMargin = 0.3f;
                         if(distance <= (m_BrushSize - circleMargin))
-                            m_World.PlaceParticle(SelectedElement(), position);
+                            m_World.PlaceParticle(m_World.GetParticleDatabase().Get(SelectedElement()), position);
                     }
                 }
             } break;
@@ -146,28 +149,28 @@ namespace ParticleSimulation
                     for(int j = m_BrushSize; j > -m_BrushSize; j--)
                     {
                         MMath::i32Vec2 position(center.x + i, center.y + j);
-                        m_World.PlaceParticle(SelectedElement(), position);
+                        m_World.PlaceParticle(m_World.GetParticleDatabase().Get(SelectedElement()), position);
                     }
                 }
             } break;
         }
     }
 
-    ElementID UserInterface::SelectedElement() const
+    ParticleID UserInterface::SelectedElement() const
     {
         if(m_Erase)
-            return Element::Null;
+            return 0;
 
         switch(m_ElementID)
         {
             case 0:
-                return Element::Sand;
+                return 1;
             case 1:
-                return Element::Rock;
+                return 2;
             case 2:
-                return Element::Water;
+                return 3;
             default:
-                return Element::Null;
+                return 4;
         }
     }
 

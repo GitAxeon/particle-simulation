@@ -41,7 +41,7 @@ namespace ParticleSimulation
         int BrushSize() const { return m_BrushSize; }
     
     private:
-        ElementID SelectedElement() const;
+        ParticleID SelectedElement() const;
 
     private:
         World& m_World;

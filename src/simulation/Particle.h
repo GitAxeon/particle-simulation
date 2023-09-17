@@ -2,32 +2,31 @@
 
 #include "../RGBA.h"
 #include "Math.h"
-#include "WorldInfo.h"
 
 namespace ParticleSimulation
 {   
-    using ElementID = unsigned int;
-
-    namespace Element
-    {
-        enum : ElementID
-        {
-            Unknown, Null, Sand, Rock, Water
-        };
-    };
-
-    class World;
+    using ParticleID = unsigned int;
+    enum class StateOfMatter { Unknown, Solid, Gas, Liquid };
     
-    struct Particle
+    class ParticleBehaviour;
+    
+    struct ParticleData
     {
-        ElementID ID;
+        ParticleData()
+        {
+            Id = 666;
+            Color = RGBA(255, 0, 255);
+            MatterState = StateOfMatter::Unknown;
+            Sleep = true;
+
+            Behaviour = nullptr;
+        }
+
+        ParticleID Id;
         RGBA Color;
-        bool sleep = false;
+        StateOfMatter MatterState;
+        bool Sleep;
 
-        Particle() : ID(Element::Null), Color(RGBA(0,0,0,255)) { }
-        Particle(ElementID element) : ID(element), Color(RGBA(255,0,255,255)) { }
-        Particle(ElementID element, RGBA color) : ID(element), Color(color) { }
-
-        bool Update(World& world, Vec2 position);
+        ParticleBehaviour* Behaviour;
     };
 }
